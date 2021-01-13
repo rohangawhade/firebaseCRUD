@@ -1,4 +1,95 @@
 <%- include('../../styles/header.ejs') %>
-<h2>Lorem ipsum dolor sit amet.</h2>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque reiciendis accusamus soluta culpa sapiente est? Accusamus alias fugit porro iure.</p>
+<div class="container my-5">
+    <h2 class="text-center">Enter student details</h2>
+    <div class="mb-3">
+        <label for="fname" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="fname" placeholder="First Name">
+    </div>
+    <div class="mb-3">
+        <label for="lname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lname" placeholder="Last Name">
+    </div>
+    <div class="mb-3">
+        <label for="rollno" class="form-label">Roll no</label>
+        <input type="text" class="form-control" id="rollno" placeholder="Roll no">
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" id="insert">Insert</button>
+        <button class="btn btn-primary" id="select">Select</button>
+        <button class="btn btn-primary" id="update">Update</button>
+        <button class="btn btn-primary" id="delete">Delete</button>
+    </div>
+    </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-database.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyB9D45CS7chjvmzGHXEfqTczZ-7wka2fGA",
+        authDomain: "fir-crud-c0a6d.firebaseapp.com",
+        databaseURL: "https://fir-crud-c0a6d-default-rtdb.firebaseio.com",
+        projectId: "fir-crud-c0a6d",
+        storageBucket: "fir-crud-c0a6d.appspot.com",
+        messagingSenderId: "1058545709510",
+        appId: "1:1058545709510:web:8b4a0bb6a69ac7274542c7",
+        measurementId: "G-TVD694TTBS"
+    };
+    firebase.initializeApp(firebaseConfig);
+    let fname, lname, rollno;
+
+    let fname_id = document.getElementById('fname');
+    let lname_id = document.getElementById('lname');
+    let rollno_id = document.getElementById('rollno');
+
+    const empty = () => {
+        fname_id.value = "";
+        lname_id.value = "";
+        rollno_id.value = "";
+    }
+
+    const Ready = () => {
+        fname = fname_id.value;
+        lname = lname_id.value;
+        rollno = rollno_id.value;
+        console.log(`${fname} and ${lname} and ${rollno}`);
+    }
+
+    document.getElementById('insert').onclick = () => {
+        Ready();
+        firebase.database().ref('student/' + rollno).set({
+            firstName: fname,
+            lastName: lname,
+            rollNo: rollno
+        });
+        empty();
+    }
+
+    document.getElementById('select').onclick = () => {
+        Ready();
+        empty();
+        firebase.database().ref('student/' + rollno).on('value', function(data){
+            fname_id.value = data.val().firstName;
+            lname_id.value = data.val().lastName;
+            rollno_id.value = data.val().rollNo;
+        });
+    }
+
+    document.getElementById('update').onclick = () => {
+        Ready();
+        firebase.database().ref('student/' + rollno).update({
+            firstName: fname,
+            lastName: lname,
+        });
+        empty();
+    }
+
+    document.getElementById('delete').onclick = () => {
+        Ready();
+        firebase.database().ref('student/' + rollno).remove();
+        empty();
+    }
+</script>
+
 <%- include('../../styles/footer.ejs') %>
